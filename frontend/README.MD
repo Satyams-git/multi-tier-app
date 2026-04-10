@@ -1,4 +1,4 @@
-NOTES APP — MULTI-TIER (Frontend + Backend + MySQL)
+Dairy APP — MULTI-TIER (Frontend + Backend + MySQL)
 ===================================================
 
 This project is a simple multi-tier Notes App running on Docker (without docker-compose).
