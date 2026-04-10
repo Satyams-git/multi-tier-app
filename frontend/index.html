@@ -2,45 +2,157 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Notes App</title>
+  <title>My Diary</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Georgia", serif;
+      background: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+      background-color: #f5e6c8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .diary {
+      width: 600px;
+      background: #fff8dc;
+      border: 2px solid #c2a878;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .feather {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      font-size: 60px;
+      transform: rotate(20deg);
+    }
+
+    h1 {
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      color: #5a3e1b;
+      margin-bottom: 20px;
+      border-bottom: 1px dashed #c2a878;
+      padding-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed #999;
+      font-size: 16px;
+      font-family: "Georgia", serif;
+      color: #3e2f1c;
+      outline: none;
+      resize: none;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #8b5e3c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: "Georgia", serif;
+    }
+
+    button:hover {
+      background: #6d472c;
+    }
+
+    .notes {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .note-item {
+      border-bottom: 1px dashed #aaa;
+      padding: 8px 0;
+      font-style: italic;
+    }
+
+    .empty {
+      color: #777;
+      font-style: italic;
+    }
+
+  </style>
 </head>
+
 <body>
-  <h1>Notes App</h1>
+
+<div class="diary">
+  <div class="feather">🪶</div>
+
+  <h1>My Diary</h1>
 
   <form id="noteForm">
-    <textarea id="note" rows="6" cols="60" placeholder="Type note here..."></textarea><br>
-    <button type="submit">Save Note</button>
+    <textarea id="note" placeholder="Write your thoughts..."></textarea>
+    <button type="submit">Save Entry</button>
   </form>
 
-  <h2>Saved Notes</h2>
-  <pre id="notes">Loading...</pre>
+  <div class="notes" id="notes">
+    Loading...
+  </div>
+</div>
 
 <script>
 async function fetchNotes(){
   try {
     const res = await fetch('/api/notes');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    document.getElementById('notes').textContent = text || '(no notes)';
+
+    const notesContainer = document.getElementById('notes');
+
+    if (!text) {
+      notesContainer.innerHTML = "<p class='empty'>No entries yet...</p>";
+      return;
+    }
+
+    const notesArray = text.split('\n').filter(n => n.trim() !== '');
+
+    notesContainer.innerHTML = notesArray.map(note => `
+      <div class="note-item">✒ ${note}</div>
+    `).join('');
+
   } catch(e){
-    document.getElementById('notes').textContent = 'Error fetching notes: ' + e;
+    document.getElementById('notes').innerHTML = "Error loading diary...";
   }
 }
 
 document.getElementById('noteForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  const note = document.getElementById('note').value;
+
+  const noteInput = document.getElementById('note');
+  const note = noteInput.value.trim();
+
   if (!note) return;
+
   await fetch('/api/notes', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ note })
   });
-  document.getElementById('note').value = '';
+
+  noteInput.value = '';
   fetchNotes();
 });
 
 fetchNotes();
 </script>
+
 </body>
 </html>
