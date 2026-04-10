@@ -1,7 +1,7 @@
 Dairy APP — MULTI-TIER (Frontend + Backend + MySQL)
 ===================================================
 
-This project is a simple multi-tier Notes App running on Docker (without docker-compose).
+This project is a simple multi-tier Dairy App running on Docker (without docker-compose).
 It consists of:
 
 - Frontend: Nginx serving index.html and proxying /api to backend
