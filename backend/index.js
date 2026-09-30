@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-const DB_HOST = process.env.DB_HOST || 'notes-db';
+const DB_HOST = process.env.DB_HOST || 'dairy-db';
 const DB_USER = process.env.DB_USER || 'root';
 const DB_PASS = process.env.DB_PASS || 'rootpassword';
 const DB_NAME = process.env.DB_NAME || 'notesdb';
