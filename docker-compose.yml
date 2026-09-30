@@ -1,41 +1,41 @@
 version: "3.9"
 
 networks:
-  notes-net:   # yahan apna network define kar diya
+  dairy-net:   # defining our custom network here
 
 services:
   db:
     image: mysql:8.0
-    container_name: notes-db
+    container_name: dairy-db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: notesdb
     volumes:
-      - notes-data:/var/lib/mysql
+      - dairy-data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
     networks:
-      - notes-net   # db service ko network me joda
+      - dairy-net   # attach db service to the network
     restart: always
 
   backend:
     build: ./backend
-    container_name: notes-backend
+    container_name: dairy-backend
     environment:
-      DB_HOST: db     # network ke andar "db" service name se resolve hoga
+      DB_HOST: db     # resolves via the "db" service name within the network
       DB_USER: root
       DB_PASS: rootpassword
       DB_NAME: notesdb
     depends_on:
       - db
     ports:
-      - "3000:3000"   # optional, debugging ke liye
+      - "3000:3000"   # optional, for debugging
     networks:
-      - notes-net     # backend bhi same network me
+      - dairy-net     # backend is on the same network too
     restart: always
 
   frontend:
     image: nginx:latest
-    container_name: notes-frontend
+    container_name: dairy-frontend
     ports:
       - "8080:80"
     volumes:
@@ -44,8 +44,8 @@ services:
     depends_on:
       - backend
     networks:
-      - notes-net     # frontend bhi connect
+      - dairy-net     # frontend is connected too
     restart: always
 
 volumes:
-  notes-data:
+  dairy-data:
